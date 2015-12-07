@@ -1,0 +1,10 @@
+.temp {
+    text-align: center;
+    margin: 40px 60px;
+    padding: 20px 60px;
+    border: 1px solid #4488bb;
+    font-size: 18px;
+    font-color: #5566ff;
+    font-family: sans-serif;
+    background-color: #ddeeff;
+}
