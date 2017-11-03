@@ -1,0 +1,245 @@
+<script>
+console.log('app: starting techbits application...');
+</script>
+
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="/bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="/bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="./mj-styled-markdown/mj-styled-markdown.html">
+
+<dom-module id="mj-techbits-app">
+
+  <style>
+    :host {
+      display: block;
+    }
+
+    .main {
+      margin: 40px auto;
+    }
+
+    h2 {
+	    font: bold 24px Arial, Helvetica, sans-serif;
+	    color: #73b40e;
+    }
+
+    p {
+    	font: normal font-size: 12px/1.8em Arial, Helvetica, sans-serif;
+    	color: #5f5f5f;
+    }
+
+    a {
+	    color: #73b40e;
+	    text-decoration: underline;
+	}
+
+	paper-toolbar.drawer-bar {
+	  --paper-toolbar-background: #eee;
+	  --paper-toolbar-color: #444;
+	}
+
+	paper-header-panel {
+	  --paper-header-panel-shadow: {
+	      height: 1px;
+	      bottom: -1px;
+	      box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.4);
+	  };
+	}
+
+	paper-menu {
+		--paper-menu-background-color: #eee;
+		--paper-menu: {
+			overflow: hidden;
+		}
+	}
+
+	paper-toolbar.main-bar {
+	  --paper-toolbar-background: #88c149;
+	}
+
+	.main-div {
+		padding: 20px;
+	}
+
+	paper-drawer-panel {
+	  --paper-drawer-panel-left-drawer-container: {
+	    border-right: 1px solid #ddd;
+	    background-color: #eee;
+	  };
+	}
+
+	paper-item {
+		--paper-item:  {
+			cursor: pointer;
+		}
+	}
+
+	.icon {
+		background: url('/favicon.ico') no-repeat 0 -12px;
+		height: 34px;
+		width: 64px;
+	}
+
+	.title {
+		font-size: 20px;
+	}
+
+  </style>
+
+  <template>
+
+	<paper-drawer-panel id="drawerPanel">
+	  <paper-header-panel drawer>
+	    <paper-toolbar class="drawer-bar">
+	      <div class="icon"></div>
+	    </paper-toolbar>
+	    <div>
+			<paper-menu id="menu" selected="0">
+				<template is="dom-repeat" items="[[routes]]" as="route">
+					<paper-item>
+			            <a href="[[route.path]]">[[route.title]]</a>
+			        </paper-item>
+				</template>
+			</paper-menu>
+	     </div>
+	  </paper-header-panel>
+	  <paper-header-panel main>
+	    <paper-toolbar class="main-bar">
+	      <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+	      <div class="title">Techbits - noted by Matt Jarvis</div>
+	    </paper-toolbar>
+	    <div class="main-div">
+          <mj-styled-markdown id="md"></mj-styled-markdown>
+
+			<!--
+          <iron-pages attr-for-selected="data-route" selected="[[route]]">
+
+		        <section data-route="articles:nothing">
+		        </section>
+		        <section data-route="articles:polymer:paper-drawer:styling">
+		        </section>
+		        <section data-route="articles:polymer:paper-icon-button:iron-icons-dependency">
+		        </section>
+		        <section data-route="articles:polymer:paper-submenu:expected-classes">
+		        </section>
+			<template is="dom-repeat" items="[[routes]]" as="route">
+		        <section data-route="[[route]]">
+		        </section>
+			</template>
+
+	       </iron-pages>
+			-->
+	    </div>
+	  </paper-header-panel>
+	</paper-drawer-panel>
+
+    <div class="main" id="mainContainer">
+
+    </div>
+
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'mj-techbits-app',
+
+    properties: {
+
+      route: String,
+
+      routes: {
+        type: Array,
+        value: [
+           	{ path: '#articles:nothing', title: 'Nothing' },
+           	{ path: '#articles:polymer:paper-drawer:styling', title: 'Paper-drawer Styling' },
+        	{ path: '#articles:polymer:paper-icon-button:iron-icons-dependency', title: 'Iron-icons Dependency' },
+        	{ path: '#articles:polymer:paper-submenu:expected-classes', title: 'Paper-submenu Classes' },
+        ]
+      }
+    },
+
+    listeners: {
+      'iron-select': 'onIronSelect',
+    },
+
+    onIronSelect: function(event, detail, sender) {
+    },
+
+    ready: function() {
+    	console.log('ready called....');
+      var element = this;
+
+      window.addEventListener('hashchange', function() {
+        element.setRoute();
+      }, false);
+
+    },
+
+    created: function() {
+    	//console.log('created called....items', this.$.menu.items);
+    	console.log('created called....');
+    },
+
+    attached: function() {
+      //
+
+      this.setRoute();
+    },
+
+    setRoute: function() {
+      var hash = window.location.hash;
+      if (hash.length) {
+        var index = this.getRouteIndex(hash.substring(1));
+        this.showRoute(index);
+      }
+      else {
+        this.showRoute(0);
+      }
+
+    	console.log('attach called....items', this.$.menu.items);
+      console.log('hash:', hash);
+
+      if (this.$.drawerPanel.narrow) {
+        console.log('closing drawer...');
+        this.$.drawerPanel.closeDrawer();
+      }
+
+      document.title = this.route.title + ' — Matt Jarvis — TechBits';
+      document.getElementById('mainContainer').scrollTop = 0;
+    },
+
+    showRoute: function(routeIndex) {
+      this.route = this.routes[routeIndex];
+      this.$.menu.select(routeIndex);
+      var paths = this.route.path.replace('#', '').split(':');
+      this.$.md.setMdUrl('/' + paths.join('/') + '.md');
+      console.log('path:', '/' + paths.join('/') + '.md');
+      //articles/polymer/paper-icon-button.md
+    },
+
+    getRouteIndex: function(route) {
+      var routeIndex = 0;
+      this.routes.some(function(element, index) {
+        if ('#' + route === element.path) {
+          routeIndex = index;
+          return true;
+        }
+      });
+      return routeIndex;
+    }
+
+  });
+
+</script>

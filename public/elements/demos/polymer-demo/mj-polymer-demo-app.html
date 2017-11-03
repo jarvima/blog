@@ -1,0 +1,38 @@
+<script>
+console.log('app: starting techbits application...');
+</script>
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<dom-module id="mj-polymer-demo-app">
+  <style>
+    div.main {
+      padding: 40px;
+      font-family: Helvetica, Arial;
+      color: #889977;
+    }
+  </style>
+
+  <template>
+    <div class="main">
+      This is the demo!
+    </div>
+  </template>
+
+  <script>
+  (function() {
+    console.log('is this running?')
+
+    Polymer({
+      is: 'mj-polymer-demo-app',
+
+      ready: function() {
+        console.log('it is ready!!!!!');
+      }
+
+    });
+
+  })();
+
+  </script>
+</dom-module>

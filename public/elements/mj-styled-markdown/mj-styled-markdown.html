@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../mj-ajax.html">
+
+<link href="./bootstrap-responsive-min.css" rel="stylesheet" type="text/css" />
+<link href="./cerulean-min.css" rel="stylesheet" type="text/css" />
+<link href="./strapdown.css" rel="stylesheet" type="text/css" />
+
+<script src="./strapdown-mod.js"></script>
+
+<dom-module id="mj-styled-markdown">
+
+  <style>
+    .container {
+      width: auto;
+    }
+  </style>
+
+  <template>
+    <mj-ajax id="ajax"></mj-ajax>
+    <div id="md">
+      <div class="container" id="content"></div>
+    </div>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'mj-styled-markdown',
+
+    properties: {
+
+      mdUrl: {
+        type: String,
+        notify: true
+      }
+    },
+
+    ready: function() {
+      if (this.mdUrl) {
+        this.setMdUrl(this.mdUrl);
+      }
+    },
+
+    setMdUrl: function(mdUrl) {
+      console.log('handleMdUrlChange fired...');
+      var element = this;
+      return this.$.ajax.get(mdUrl, { handleAs:'text' })
+      .then(function(res) {
+        //console.log('res:', res);
+        console.log('md:', Polymer.dom(element.$.md));
+        element.style.display = 'none';
+
+        mj.styleMarkdown(element, res);
+
+        return res;
+      },
+      function(error) {
+        console.log('get: error:', error);
+        return "";
+      });
+    }
+
+  });
+
+</script>

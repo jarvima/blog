@@ -1,0 +1,71 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/promise-polyfill/promise-polyfill-lite.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="mj-ajax">
+  <template>
+    <iron-ajax id="ironAjax"></iron-ajax>
+   </template>
+</dom-module>
+
+<script>
+
+(function() {
+
+  var deferreds = {};
+
+  Polymer({
+
+    is: 'mj-ajax',
+
+    get: function(url, options) {
+      var deferred = deferreds[url];
+      if (deferred) {
+        return deferred.promise;
+      }
+
+      deferred = {};
+      deferred.promise = new Promise(function (resolve, reject) {
+        deferred.resolve = resolve;
+        deferred.reject = reject;
+      });
+
+      //console.log('getting ' + url + '...');
+      options = options || {};
+
+      if (url.substring(0, 4) === 'http') {
+        this.$.ironAjax.url = url;
+      }
+      else {
+        this.$.ironAjax.url = window.location.origin + url;
+      }
+      if (options.handleAs) {
+          this.$.ironAjax.handleAs = 'text';
+      }
+      this.$.ironAjax.generateRequest().completes.then(function(data) {
+        if (data.status > 299) {
+          deferred.reject(data);
+          console.log('bad status in ajax get:', data);
+          return;
+        }
+
+        //console.log('got ' + url + ':', data.xhr);
+        //console.log('headers:', data.xhr.getAllResponseHeaders());
+        //console.log('response text:', data.xhr.responseText);
+
+        deferred.resolve(data.response);
+      }, function(error) {
+        deferred.reject(error);
+        console.log('error in ajax get:', error);
+      });
+
+      deferreds[url] = deferred;
+      return deferred.promise;
+    },
+
+  });
+
+})();
+
+</script>
+

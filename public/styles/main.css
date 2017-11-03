@@ -8,3 +8,10 @@
     font-family: sans-serif;
     background-color: #ddeeff;
 }
+
+body {
+  background: #fafafa;
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
